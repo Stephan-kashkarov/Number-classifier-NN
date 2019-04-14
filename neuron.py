@@ -14,13 +14,13 @@ class Neuron:
         -> Activation          | This is the output of this neuron
 
     Kwargs: ~ This initalizer takes input in the form of kwargs as follows
-        -> x                   | The width of the input row
-        -> y                   | The height of the input row
+        -> shape               | The shape of the input row
+        -> weights             | The weights of system, if none provied will be random
         
     """
     def __init__(self, **kwargs):
-        self.shape = (kwargs.get('x', 3), kwargs.get('y', 1))
-        self.weights = np.random.rand(self.shape)
+        self.shape = kwargs.get('shape', (3,))
+        self.weights = kwargs.get('weights', np.random.rand(self.shape))
         self.activation = 0
 
     def execute(self, inputs):

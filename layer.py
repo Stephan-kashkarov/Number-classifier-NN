@@ -24,15 +24,19 @@ class Layer:
         -> activation          | The activation function to be mapped over the output
     """
     def __init__(self, **kwargs):
-        self.shape = (kwargs.get("x", 3), kwargs.get('y', 1))
+        self.shape = (kwargs.get('shape', (3,)))
         self.activation = activation_funcs.get(kwargs.get('activation', 'sigmoid'))
+        weights = kwargs.get('weights', None)
         self.neurons = np.array(
-            [
-                Neuron(shape=self.shape)
-                for x in range(
-                    self.shape[0] * self.shape[1]
+            list([
+                Neuron(
+                    shape=self.shape,
+                    weights=weights.pop(0)
                 )
-            ]
+                for x in range(
+                    np.multiply(self.shape)
+                )
+            ])
         ).reshape(self.shape)
         self.output = np.empty(self.shape)
 
