@@ -8,8 +8,6 @@ activation_funcs = {
     'softmax': np.vectorize(lambda x: np.exp(x)/np.sum(np.exp(x))),
 }
 
-run = np.vectorize(lambda x, y: x.execute(y))
-
 class Layer:
     """
     Layer class
@@ -39,4 +37,14 @@ class Layer:
         self.output = np.empty(self.shape)
 
     def execute(self, inputs):
-        self.output = self.activation(run(self.neurons, inputs).reshape(self.shape))
+        """
+        Execute method
+
+        This method executes all neurons in layer and
+        applys an activation function to each
+
+        Arguments:
+            -> inputs          | A Numpy array of the outputs of prev row
+        """
+        run = np.vectorize(lambda x: x.execute(inputs))
+        self.output = self.activation(run(self.neurons).reshape(self.shape))
