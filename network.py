@@ -1,42 +1,45 @@
 import numpy as np
-from layer import Layer
+from layer import Layer, Input_layer
 
 class Network:
-    """
-    Network class
+	"""
+	Network class
 
-    The network class is the full implementation of the
-    neural network model
+	The network class is the full implementation of the
+	neural network model
 
-    Arguments:
-        -> shape
-        -> activation_f
-        -> weights
-    """
+	Kwargs:
+		-> shape              | an array containing the shape of each layer in the network
+		-> activation_f       | an array containing each activation funtion in the network
+		-> weights            | an array of arrays of the weight of each neuron to be preset
+		-> output_lables      | an array containing the lables for each neuron in output row
+	"""
 
-    def __init__(self, **kwargs):
-        self.shape = kwargs.get("shape", [(3, 0), (3, 0), (3, 0)])
-        self.activations = kwargs.get('activations', ['relu', 'sigmoid', 'softmax'])
-        self.layers = []
-        weights = kwargs.get('weights', None)
-        for i, shpe in enumerate(self.shape):
-            self.layers.append(
-                Layer(
-                    shape=shpe,
-                    activation=self.activations[i],
-                    weights=weights[i] if weights else None
-                )
-            )
-        self.layers = np.array(self.layers)
+	def __init__(self, **kwargs):
+		self.shape = kwargs.get("shape", [(3,), (3,), (3,), (3,)])
+		self.activations = kwargs.get('activations', ['relu', 'sigmoid', 'softmax'])
+		self.layers = [Input_layer(shape=self.shape[0])]
+		self.output_lables = kwargs.get('output_lables', None)
+		weights = kwargs.get('weights', None)
+		for i, shpe in enumerate(self.shape[1:]):
+			self.layers.append(
+				Layer(
+					shape=shpe,
+					prev_shape=self.shape[i-1],
+					activation=self.activations[i],
+					weights=weights[i] if weights else None
+				)
+			)
+		self.layers = np.array(self.layers)
 
-    def execute(self):
-        pass
+	def execute(self, image):
+		pass
 
-    def error(self):
-        pass
+	def error(self):
+		pass
 
-    def update(self):
-        pass
+	def update(self):
+		pass
 
-    def train(self):
-        pass
+	def train(self, images, lables):
+		pass
