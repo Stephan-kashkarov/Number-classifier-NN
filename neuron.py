@@ -20,7 +20,11 @@ class Neuron:
 	"""
 	def __init__(self, **kwargs):
 		self.shape = kwargs.get('shape', (3,))
-		self.weights = kwargs.get('weights', np.random.rand(self.shape))
+		weights = kwargs.get('weights')
+		if weights == None:
+			self.weights = list(np.random.rand(*self.shape))
+		else:
+			self.weights = weights
 		self.activation = 0
 
 	def execute(self, inputs):
