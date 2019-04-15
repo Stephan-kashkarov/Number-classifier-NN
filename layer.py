@@ -62,6 +62,7 @@ class Input_layer:
 	it takes a shape as an arguement and then contains all shapes
 	within self.output
 	"""
+
 	def execute(self, image):
 		"""
 		Execute method

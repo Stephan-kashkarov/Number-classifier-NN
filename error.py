@@ -17,6 +17,7 @@ def cross_entropy(outputs, labels):
 		)
 	return round(sum(arr), 3)
 
-def der_cross_entropy(output, label):
-	return -1 * (label * (1/output) + (1-label) * (1/(1-output)))
+def der_cross_entropy(outputs, labels):
+	for i, output in enumerate(outputs):
+		yield -1 * (labels[i] * (1/output) + (1-labels[i]) * (1/(1-output)))
 
