@@ -34,7 +34,7 @@ class Network:
 			)
 		self.layers = np.array(self.layers)
 		self.error = 1
-		self.learning_rate = kwargs.get('learning_rate',0.01)
+		self.learning_rate = kwargs.get('learning_rate',0.001)
 
 	def execute(self, image, label):
 		"""
@@ -57,25 +57,28 @@ class Network:
 		return outputs
 
 	def backpropogate(self, outputs, labels):
+		error = list(der_cross_entropy(outputs, labels))
 		for index_layer, layer in enumerate(self.layers[:0:-1]):
 			prev_layer = self.layers[index_layer - 1]
 			for index_neuron, neuron in enumerate(layer.neurons):
-				for index_weight, weight in enumerate(neuron.weights.flatten()):
-					err_derivative = list(der_cross_entropy(outputs, labels))[index_neuron]
-					activ_derivative = list(der_funcs[layer.activation](prev_layer.output))[index_neuron]
-					weight_derivative = prev_layer.output[index_neuron]
+				# neuron derivatives
+				activ_derivative = list(der_funcs[layer.activation](prev_layer.output))[index_neuron]
+				err_derivative = error[index_neuron]
+				for index_weight, weight in enumerate(neuron.weights):
+					# weight derivative
+					weight_derivative = prev_layer.output[index_weight]
+					# calculate total derivative
 					derivative = err_derivative * activ_derivative * weight_derivative
+					# calculate and update new weight
 					new_weight = weight - (derivative*self.learning_rate)
-					np.put(neuron.weights, index_weight, new_weight)
+					neuron.weights[index_weight] = new_weight
 
-
-
-	def update(self):
-		pass
 
 	def train(self, images, labels):
-		while images:
-			image, label = images.pop, labels.pop
-			self.execute(image, label)
-			self.backpropogate()
+		while True:
+			for i in range(len(images)):
+				image, label = images[i], labels[i]
+			self.backpropogate(self.execute(image, label), label)
+		# self.execute(images[0], labels[0])
+		
 

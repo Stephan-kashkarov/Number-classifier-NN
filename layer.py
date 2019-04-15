@@ -62,6 +62,9 @@ class Input_layer:
 	it takes a shape as an arguement and then contains all shapes
 	within self.output
 	"""
+	def __init__(self):
+		self.neurons = [] # removes pylint error
+		self.output = 0
 
 	def execute(self, image):
 		"""
@@ -74,4 +77,5 @@ class Input_layer:
 		Arguments:
 			-> image          | An array of numbers used as input in shape self.shape
 		"""
+		self.output = image
 		return image
