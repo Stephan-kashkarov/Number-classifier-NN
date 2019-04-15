@@ -61,20 +61,21 @@ class Network:
 		for index_layer, layer in enumerate(self.layers[:0:-1]):
 			prev_layer = self.layers[index_layer + 1]
 			next_layer = self.layers[index_layer - 1] if index_layer > 0 else None
+			layer.err_derivative = []
+			layer.activ_derivative = []
+			layer.weight_derivative = []
 			for index_neuron, neuron in enumerate(layer.neurons):
 				# neuron derivatives
 				layer.activ_derivative.append(list(der_funcs[layer.activation](prev_layer.output))[index_neuron])
 				if not next_layer:
 					layer.err_derivative.append(error[index_neuron])
 				else:
-					layer.err_derivative.append(sum(
-						[
-							next_layer.err_derivative[index_neuron]
-							* next_layer.activ_derivative[index_neuron]
-							* next_layer.neurons[index_neuron].weights[x]
-							for x in range(len(next_layer.neurons[index_neuron].weights))
-						]
-					))
+					temp = []
+					for y in range(len(next_layer.neurons)):
+						temp2 = next_layer.err_derivative[y] * next_layer.activ_derivative[y]
+						for x in range(len(next_layer.neurons[0].weights)):
+							temp.append(temp2*next_layer.neurons[y].weights[x])
+					layer.err_derivative.append(sum(temp))
 				for index_weight, weight in enumerate(neuron.weights):
 					# weight derivative
 					layer.weight_derivative.append(prev_layer.output[index_weight])
