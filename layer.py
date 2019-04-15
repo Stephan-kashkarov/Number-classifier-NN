@@ -40,6 +40,11 @@ class Layer:
 		).reshape(self.shape)
 		self.output = np.empty(self.shape)
 
+		# keep track variables
+		self.err_derivative = []
+		self.activ_derivative = []
+		self.weight_derivative = []
+
 	def execute(self, inputs):
 		"""
 		Execute method

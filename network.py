@@ -60,19 +60,29 @@ class Network:
 		error = list(der_cross_entropy(outputs, labels))
 		for index_layer, layer in enumerate(self.layers[:0:-1]):
 			prev_layer = self.layers[index_layer + 1]
+			next_layer = self.layers[index_layer - 1] if index_layer > 0 else None
 			for index_neuron, neuron in enumerate(layer.neurons):
 				# neuron derivatives
-				activ_derivative = list(der_funcs[layer.activation](prev_layer.output))[index_neuron]
-				err_derivative = error[index_neuron]
+				layer.activ_derivative.append(list(der_funcs[layer.activation](prev_layer.output))[index_neuron])
+				if not next_layer:
+					layer.err_derivative.append(error[index_neuron])
+				else:
+					layer.err_derivative.append(sum(
+						[
+							next_layer.err_derivative[index_neuron]
+							* next_layer.activ_derivative[index_neuron]
+							* next_layer.neurons[index_neuron].weights[x]
+							for x in range(len(next_layer.neurons[index_neuron].weights))
+						]
+					))
 				for index_weight, weight in enumerate(neuron.weights):
 					# weight derivative
-					weight_derivative = prev_layer.output[index_weight]
+					layer.weight_derivative.append(prev_layer.output[index_weight])
 					# calculate total derivative
-					derivative = err_derivative * activ_derivative * weight_derivative
+					derivative = layer.err_derivative[-1] * layer.activ_derivative[-1] * layer.weight_derivative[-1]
 					# calculate and update new weight
-					new_weight = weight - (derivative*self.learning_rate)
+					new_weight = weight - (derivative * self.learning_rate)
 					neuron.weights[index_weight] = new_weight
-
 
 	def train(self, images, labels):
 		labels = list(labels)
@@ -85,6 +95,4 @@ class Network:
 			for i in range(len(images)):
 				image, label = images[i], labels[i]
 			self.backpropogate(self.execute(image, label), label)
-		# self.execute(images[0], labels[0])
-		
 
