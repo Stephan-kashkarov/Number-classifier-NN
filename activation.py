@@ -10,12 +10,12 @@ def der_relu(arr):
 
 
 def sigmoid(arr):
-	for val in arr:
+	for val in arr if isinstance(arr, list) else [arr]:
 		yield (1/(1+np.exp(-val)))
 
 def der_sigmoid(arr):
 	for val in arr:
-		yield sigmoid(val) * sigmoid(1 - val)
+		yield np.multiply(list(sigmoid(val)), list(sigmoid(1 - val)))[0]
 
 
 def softmax(arr):
