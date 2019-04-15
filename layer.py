@@ -63,32 +63,17 @@ class Input_layer:
 	This class acts an input layer for the program
 	it takes a shape as an arguement and then contains all shapes
 	within self.output
-
-	Kwargs:
-		-> shape               | The shape of the inputs
 	"""
-	def __init__(self, **kwargs):
-		self.output = np.empty(kwargs.get('shape', (3,)))
 
-	def update(self, image):
-		"""
-		Update method
-
-		this method takes an image as an input and 
-		stores it in self.output to use as input
-		for a Network
-
-		Args:
-			-> image          | An array of numbers used as input in shape self.shape
-		"""
-		self.output = np.array(image)
-
-	def execute(self):
+	def execute(self, image=None):
 		"""
 		Execute method
 
 		This method allows of a network to dynamically
 		extract image the same way as Layer class allowing
 		for seamless execution
+
+		Arguments:
+			-> image          | An array of numbers used as input in shape self.shape
 		"""
-		return self.output
+		return self.output if not image else image

@@ -33,7 +33,13 @@ class Network:
 		self.layers = np.array(self.layers)
 
 	def execute(self, image):
-		pass
+		outputs = np.array(image)
+		for layer in enumerate(self.layers[1:], 0):
+			outputs = layer.execute(outputs)
+
+		print("NN executed with these results:")
+		for i, output in enumerate(outputs):
+			print(f"{self.output_lables[i]}: {output:2f} confidence")
 
 	def error(self):
 		pass
