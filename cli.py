@@ -1,22 +1,18 @@
 from network import Network
-inputs = [
-    [0.3, 0.2, 0.7],
-    [0.4, 0.8, 0.3],
-    [0.2, 0.5, 0.1],
-    [0.9, 0.3, 0.2],
-    [0, 0.2, 0.1],
-]
-outputs = [
-    [0, 1, 0],
-    [0, 0, 0],
-    [1, 0, 1],
-    [0, 0, 1],
-    [1, 1, 0],
-]
+from mnist import MNIST
 
+mndata = MNIST('./data')
+images, labels = mndata.load_training()
 if __name__ == '__main__':
     print('Making network')
-    n = Network()
+    n = Network(
+            shape=[(784,), (16,), (16,), (16,), (10,)],
+            activations=['relu', 'sigmoid', 'softmax', 'softmax'],
+            output_labels=list(range(10))
+    )
     print('Executing Network')
-    n.train(inputs, outputs)
+    try:
+        n.train(images, labels)
+    except KeyboardInterrupt:
+        pass
     print('Exiting')

@@ -30,6 +30,7 @@ class Layer:
 			list([
 				Neuron(
 					shape=self.shape,
+					prev_shape=self.prev_shape,
 					weights=weights.pop(0) if weights else None
 				)
 				for x in range(
