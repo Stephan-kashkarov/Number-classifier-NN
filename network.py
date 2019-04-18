@@ -1,3 +1,4 @@
+import json
 import numpy as np
 from layer import Layer, Input_layer
 from error import cross_entropy, der_cross_entropy
@@ -53,10 +54,31 @@ class Network:
 			outputs = layer.execute(outputs)
 		
 		self.error = cross_entropy(outputs, label)
-		# print(f"error: {self.error}")
+		print(f"error: {self.error}")
 		return outputs
 
 	def backpropogate(self, outputs, labels):
+		"""
+		backprpogate
+
+		This is the training algorithm of the neural network.
+		It operates in accordance to a number of mathematical formulas
+		which i dont really understand
+
+		TODO: Understand formulas
+
+		The function takes some outputs and labels and then
+		backpropogates through the network to find the ideal
+		weight to give the correct answer.
+
+		It then updates these weights by subtracting the change
+		This change is found using derivatives.
+
+		@param outputs | np.array | a list of outputs
+		@param outputs | np.array | a list of labels for given outputs
+
+		@returns error | Int      | The error in the system
+		"""
 		error = list(der_cross_entropy(outputs, labels))
 		layers = self.layers[:0:-1]
 		for index_layer, layer in enumerate(self.layers[:0:-1]):
@@ -91,6 +113,18 @@ class Network:
 		return error
 
 	def train(self, images, labels):
+		"""
+		Train method
+
+		This method takes a set of images and labels then feeds
+		them to the neural network which then backpropogates with its outputs
+
+		This then breaks when it reaches its minimum error and returns the
+		weights used to acheive this error
+
+		@param images | list | an array of images
+		@param labels | list | an array of labels
+		"""
 		labels = list(labels)
 		if not isinstance(labels[0], list):
 			for i, x in enumerate(labels):
@@ -111,6 +145,20 @@ class Network:
 			self.backpropogate(outputs, label)
 
 
-	def save_weights():
-		pass
+	def save_weights(self):
+		print("Saving...")
+		output = {
+			'error':self.error,
+			'weights': []
+		}
+		for layer in self.layers[1:]:
+			temp = []
+			for neuron in layer.neurons:
+				temp.append(list(neuron.weights))
+			output['weights'].append(temp)
+		
+		with open(f"weights/weights_{self.error}.json", "w+") as w:
+			json.dump(output, w)
+		
+		print(f"Saved at /weights/weights_{self.error}.json")
 

@@ -23,7 +23,7 @@ class Neuron:
 		self.prev_shape = kwargs.get('prev_shape', (3,))
 		weights = kwargs.get('weights')
 		if weights == None:
-			self.weights = list(np.random.rand(*self.prev_shape))
+			self.weights = np.array(list(np.random.rand(*self.prev_shape)))
 		else:
 			self.weights = weights
 		self.activation = 0
