@@ -83,7 +83,9 @@ class Input_layer:
 		Arguments:
 			-> image          | An array of numbers used as input in shape self.shape
 		"""
+		print("minimising images 1")
 		for i, pixel in enumerate(image):
+			
 			image[i] = pixel/255
 				
 		self.output = image

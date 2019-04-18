@@ -2,7 +2,7 @@ import json
 import numpy as np
 from layer import Layer, Input_layer
 from error import cross_entropy, der_cross_entropy
-from activation import der_funcs
+from activation import der_funcs, softmax
 
 class Network:
 	"""
@@ -37,7 +37,7 @@ class Network:
 		self.error = 1
 		self.learning_rate = kwargs.get('learning_rate',0.001)
 
-	def execute(self, image, label):
+	def execute(self, image, label, printing=False):
 		"""
 		Execute method
 
@@ -52,9 +52,16 @@ class Network:
 		outputs = np.array(image)
 		for layer in self.layers:
 			outputs = layer.execute(outputs)
-		
+
+		output = list(outputs)
+		if not printing:
+			print(f"prediction: {self.output_labels[output.index(max(output))]}")
+		if printing:
+			print(f"Prediction: {self.output_labels[output.index(max(output))]}, Answer: {str(label)}")
 		self.error = cross_entropy(outputs, label)
 		print(f"error: {self.error}")
+		if printing:
+			return self.output_labels[output.index(max(output))] == str(label)
 		return outputs
 
 	def backpropogate(self, outputs, labels):
@@ -131,18 +138,24 @@ class Network:
 				a = [0 for x in range(10)]
 				a[x] = 1
 				labels[i] = a
-		n = 20
+
+		print("minimising images 2")
+		for image in images:
+			image = softmax(image)
+		print("done")
+
+		# n = 20
 		while True:
-			if n > 0:
-				n -= 1
+			# if n > 0:
+			# 	n -= 1
 			for i in range(len(images)):
 				image, label = images[i], labels[i]
-			error = self.error
-			outputs = self.execute(image, label)
-			if self.error > error and n == 0:
-				print(f"Min error: {self.error}")
-				return self.save_weights()
-			self.backpropogate(outputs, label)
+			# error = self.error
+				outputs = self.execute(image, label)
+			# if self.error > error and n == 0:
+				# print(f"Min error: {self.error}")
+				# return self.save_weights()
+				self.backpropogate(outputs, label)
 
 
 	def save_weights(self):
@@ -162,3 +175,5 @@ class Network:
 		
 		print(f"Saved at /weights/weights_{self.error}.json")
 
+	def load_weights(self, filename):
+		pass
