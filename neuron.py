@@ -21,7 +21,6 @@ class Neuron:
 	def __init__(self, **kwargs):
 		self.shape = kwargs.get('shape', (3,))
 		self.prev_shape = kwargs.get('prev_shape', (3,))
-		print(self.shape, self.prev_shape)
 		weights = kwargs.get('weights')
 		if weights == None:
 			self.weights = list(np.random.rand(*self.prev_shape))

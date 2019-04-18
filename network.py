@@ -53,14 +53,15 @@ class Network:
 			outputs = layer.execute(outputs)
 		
 		self.error = cross_entropy(outputs, label)
-		print(f"error: {self.error}")
+		# print(f"error: {self.error}")
 		return outputs
 
 	def backpropogate(self, outputs, labels):
 		error = list(der_cross_entropy(outputs, labels))
+		layers = self.layers[:0:-1]
 		for index_layer, layer in enumerate(self.layers[:0:-1]):
-			prev_layer = self.layers[index_layer + 1]
-			next_layer = self.layers[index_layer - 1] if index_layer > 0 else None
+			prev_layer = layers[index_layer + 1] if index_layer < len(layers) - 1 else self.layers[0]
+			next_layer = layers[index_layer - 1] if index_layer > 0 else None
 			layer.err_derivative = []
 			layer.activ_derivative = []
 			layer.weight_derivative = []
@@ -68,10 +69,13 @@ class Network:
 				# neuron derivatives
 				layer.activ_derivative.append(list(der_funcs[layer.activation](prev_layer.output))[index_neuron])
 				if not next_layer:
+					# print("a", index_layer, index_neuron)
 					layer.err_derivative.append(error[index_neuron])
 				else:
+					# print("b", index_layer, index_neuron)
 					temp = []
-					for y in range(len(next_layer.neurons)):
+					for y in range(len(next_layer.neurons) - 1):
+						# print(len(next_layer.neurons), y, index_layer)
 						temp2 = next_layer.err_derivative[y] * next_layer.activ_derivative[y]
 						for x in range(len(next_layer.neurons[0].weights)):
 							temp.append(temp2*next_layer.neurons[y].weights[x])
@@ -82,8 +86,9 @@ class Network:
 					# calculate total derivative
 					derivative = layer.err_derivative[-1] * layer.activ_derivative[-1] * layer.weight_derivative[-1]
 					# calculate and update new weight
-					new_weight = weight - (derivative * self.learning_rate)
+					new_weight = weight + (derivative * self.learning_rate)
 					neuron.weights[index_weight] = new_weight
+		return error
 
 	def train(self, images, labels):
 		labels = list(labels)
@@ -92,8 +97,20 @@ class Network:
 				a = [0 for x in range(10)]
 				a[x] = 1
 				labels[i] = a
+		n = 20
 		while True:
+			if n > 0:
+				n -= 1
 			for i in range(len(images)):
 				image, label = images[i], labels[i]
-			self.backpropogate(self.execute(image, label), label)
+			error = self.error
+			outputs = self.execute(image, label)
+			if self.error > error and n == 0:
+				print(f"Min error: {self.error}")
+				return self.save_weights()
+			self.backpropogate(outputs, label)
+
+
+	def save_weights():
+		pass
 
