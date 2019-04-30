@@ -104,4 +104,9 @@ venv.bak/
 .mypy_cache/
 
 # vscode
+.vscode/
 .vscode/*
+
+# datasets
+data/
+weights/
